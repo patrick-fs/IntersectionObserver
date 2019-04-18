@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                padding: 1em;
+            }
+            #blank {
+                height: 1500px;
+            }
+
+            #pink {
+                width: 100%;
+                height: 15em;
+                margin-bottom: 8em;
+                background-color: pink;
+            }
+
+            #blue {
+                width: 100%;
+                height: 15em;
+                margin-bottom: 50em;
+                background-color: blue;
+            }
+        </style>
+
+        <script>
+            const getFsViewName = (entry) => {
+                return entry.target.attributes.getNamedItem('data-fs-view').value;
+            };
+
+            const getFsThreshold = (entry) => {
+                const item = entry.target.attributes.getNamedItem('data-fs-view-threshold');
+                // TODO: validate item.value before parsing
+                return item ? parseInt(item.value) : undefined;
+            }
+
+            const fireEvent = (entry, count) => {
+                /*
+                // TODO: validate that name exists
+                // if not, console.warn about it and return
+                FS.event(`Viewed ${getFsViewName(entry)}`, {
+                    name: getFsViewName(entry),
+                    numberOfViews: count,
+                });
+                */
+                
+                console.log(`send event ${getFsViewName(entry)} at ${(new Date()).getTime()} with count ${count}`);
+            };
+
+            const makeIntersectedCallback = () => {
+                let count = 0;
+                let inView = false; // this for sending an event if page unloads or if
+                let inViewQueue = []; // I don't think I need this
+                let timeoutHandle;
+                
+                return entries => {
+                    for (const entry of entries) {
+                        //console.log(entry);
+                        inView = entry.isIntersecting;
+                        if (entry.isIntersecting) {
+                            console.log('intersecting');
+                            entry.target.startTime = entry.time;
+
+                            inViewQueue.push(entry);
+
+                            const delay = getFsThreshold(entry) || 500;
+                            timeoutHandle = window.setTimeout(() => {
+                                if (inView) {
+                                    count++;
+                                    //console.log(`# of views: ${count}`);
+                                    fireEvent(entry, count);
+                                }
+                            }, delay); // this appears to be bugging out still
+                            
+                        } else if (inViewQueue.length > 0) {
+                            window.clearTimeout(timeoutHandle);
+                            const found = inViewQueue.find((element) => {
+                                return getFsViewName(element) === getFsViewName(entry);
+                            });
+                            //console.log(`found: ${found}`)
+                            found.target.duration = entry.time - found.target.startTime;
+                            //console.log(`duration ${found.target.duration}`);
+                            inViewQueue = inViewQueue.filter((element) => {
+                                return getFsViewName(element) !== getFsViewName(entry);
+                            })
+
+                            //console.log(`element found, new queue length: ${inViewQueue.length}`);
+                        }
+
+                        //console.log('time: ' + entry.time.toFixed(2));
+                        //console.log('intersection ratio:  ' + entry.intersectionRatio.toFixed(3));
+                    }
+                };
+            }
+
+            const doSetup = () => {                                
+                const targets = document.querySelectorAll('[data-fs-view]')
+                targets.forEach((target) => {
+                    // TODO: inspect DOM tree to deterine if target or any ancester is blocked
+                    // (also need to look at rec/page data)
+                    // if yes, return without setting observer
+
+                    const observer = new IntersectionObserver(makeIntersectedCallback(), {
+                        threshold: [ 0.8 ]
+                    });          
+                    observer.observe(target);                
+                });
+            }
+
+            window.addEventListener('load', doSetup, false);
+        </script>
+    </head>
+    <body>
+        <div id="blank">Dragons down there V</div>
+        <div id="pink" data-fs-view="Pink Box"></div>
+        <div id="blue" data-fs-view="Blue Box" data-fs-view-threshold="2000"></div>
+    </body>
+</html>

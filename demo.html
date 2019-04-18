@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Simple Intersection Obsever</title>
+    <meta name="viewport" content="width=600">    
+    <style>
+        body {
+            background-color: rgba(240, 247, 238, 1);
+        }
+
+        .results {
+            position: fixed;
+            font-size: 16px;
+            top: 10px;
+            left: 450px;
+            width: calc(100% - 500px);
+            height: 600px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 3px solid gray;
+            margin: 5px;
+            color: gray;
+        }
+
+        .results button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px;
+            border: none;
+            background-color: transparent;
+            -webkit-appearance: none;
+        }
+
+        h2 {
+            margin-top: 0.2em;
+            margin-bottom: 0.25em;
+        }
+
+        #logging {
+            width: 100%;
+            height: calc(100% - 3.5em);
+            font-size: 16px;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+            margin: 5px;
+            color: gray;
+        }
+        body {
+            font-family: Helvetica;
+            height: 6000px;
+        }
+        
+        #target {
+            position: absolute;
+            left: 60px;
+            width: 200px;
+            height: 200px;
+            top: 2800px;
+            padding: 40px;
+            box-sizing: border-box;
+            font-size: 24pt;
+            background-color: rgba(119, 104, 113, 1);
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+        }
+    </style>
+    <script>
+        function addToLog(s)
+        {
+            let logging = document.getElementById('logging');
+            logging.textContent += s + "\n";
+            logging.scrollTop = 400000;
+        }
+
+        function clearLog()
+        {
+            let logging = document.getElementById('logging');
+            logging.textContent = '';
+        }
+
+        function stringFromRect(rect)
+        {
+            return `${rect.x}, ${rect.y} ${rect.width} x ${rect.height}`;
+        }
+
+        function makeIntersectedCallback() {
+          let count = 0;
+          let inView = false; // this for sending an event if page unloads or if 
+          return entries => {
+            for (var entry of entries) {
+              console.log(entry);
+                if (entry.isIntersecting) {
+                  console.log('intersecting');
+                  entry.target.startTime = entry.time;
+                  count++;
+                } else if (entry.target.startTime) {
+                  entry.target.duration = entry.time - entry.target.startTime;
+                  entry.target.numberOfViews = count;
+                  console.log(`duration: ${entry.target.duration}`);
+                  console.log(`# of views: ${entry.target.numberOfViews}`);
+                }
+
+                addToLog('time: ' + entry.time.toFixed(2));
+                addToLog('intersection:        ' + stringFromRect(entry.intersectionRect));
+                addToLog('intersection ratio:  ' + entry.intersectionRatio.toFixed(3));
+            }
+          };
+        }
+
+        function intersectedCallback(entries, observer)
+        {            
+            addToLog('');
+            console.log(`entries.length: ${entries.length}`);
+            if (!observer.count) {
+              observer.count = 0;
+            }
+            for (var entry of entries) {
+                console.log(entry);
+                if (entry.isIntersecting) {
+                  console.log('intersecting');
+                  entry.target.startTime = entry.time;
+                  observer.count++;
+                } else if (entry.target.startTime) {
+                  entry.target.duration = entry.time - entry.target.startTime;
+                  entry.target.numberOfViews = observer.count;
+                  console.log(`duration: ${entry.target.duration}`);
+                  console.log(`# of views: ${entry.target.numberOfViews}`);
+                }
+
+                addToLog('time: ' + entry.time.toFixed(2));
+                addToLog('intersection:        ' + stringFromRect(entry.intersectionRect));
+                addToLog('intersection ratio:  ' + entry.intersectionRatio.toFixed(3));
+            }
+        }
+
+        var observer;
+        function doSetup()
+        {
+            observer = new IntersectionObserver(makeIntersectedCallback(), {
+                //threshold: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ]
+                threshold: [ 0.8 ]
+            });
+            
+            let target = document.getElementById('target');
+            observer.observe(target);
+        }
+        window.addEventListener('load', doSetup, false);
+    </script>
+</head>
+<body>
+
+<p>Scroll down to see the target</p>
+<div class="results">
+<h2>Logging</h2>
+<button onclick="clearLog()" class="clear">🗑</button>
+<pre id="logging"></pre>
+</div>
+
+<div id="target">Target</div>
+
+</body>
+</html>
