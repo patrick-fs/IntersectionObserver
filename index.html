@@ -51,14 +51,14 @@
             const makeIntersectedCallback = () => {
                 let count = 0;
                 let inView = false; // this for sending an event if page unloads or if
-                let inViewQueue = []; // I don't think I need this
+                let inViewQueue = []; // I only need this if I'm going to calculate duration
                 let timeoutHandle;
                 
                 return entries => {
                     for (const entry of entries) {
                         //console.log(entry);
                         inView = entry.isIntersecting;
-                        if (entry.isIntersecting) {
+                        if (inView) {
                             console.log('intersecting');
                             entry.target.startTime = entry.time;
 
@@ -73,7 +73,7 @@
                                 }
                             }, delay); // this appears to be bugging out still
                             
-                        } else if (inViewQueue.length > 0) {
+                        } else {
                             window.clearTimeout(timeoutHandle);
                             const found = inViewQueue.find((element) => {
                                 return getFsViewName(element) === getFsViewName(entry);
