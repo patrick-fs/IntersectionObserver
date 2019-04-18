@@ -1,119 +1,70 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
         <style>
             body {
                 padding: 1em;
             }
+            .emoji {
+                width: 100%;
+                font-size: 10rem;
+                text-align: center;
+            }
             #blank {
-                height: 1500px;
+                height: 900px;
+            }
+
+            .box {
+                width: 100%;
+                height: 10rem;
+                text-align: center;
+                font-size: 7rem;
+                padding: 2rem 0 2rem 0;
+                font-family: 'Roboto Slab', serif;
             }
 
             #pink {
-                width: 100%;
-                height: 15em;
                 margin-bottom: 8em;
                 background-color: pink;
+                color: red;
             }
 
             #blue {
-                width: 100%;
-                height: 15em;
-                margin-bottom: 50em;
+                margin-bottom: 8em;
                 background-color: blue;
+                color: orchid;
             }
         </style>
-
-        <script>
-            const getFsViewName = (entry) => {
-                return entry.target.attributes.getNamedItem('data-fs-view').value;
+        <script src='extension.js' ></script>
+        <script>            
+            window['_fs_debug'] = false;
+            window['_fs_host'] = 'app.fullstory.test:8043';
+            window['_fs_org'] = 'testdrive';
+            window['_fs_namespace'] = 'FS';
+            window['_fs_ready'] = function () {
+                initExtension();
             };
-
-            const getFsThreshold = (entry) => {
-                const item = entry.target.attributes.getNamedItem('data-fs-view-threshold');
-                // TODO: validate item.value before parsing
-                return item ? parseInt(item.value) : undefined;
-            }
-
-            const fireEvent = (entry, count) => {
-                /*
-                // TODO: validate that name exists
-                // if not, console.warn about it and return
-                FS.event(`Viewed ${getFsViewName(entry)}`, {
-                    name: getFsViewName(entry),
-                    numberOfViews: count,
-                });
-                */
-                
-                console.log(`send event ${getFsViewName(entry)} at ${(new Date()).getTime()} with count ${count}`);
-            };
-
-            const makeIntersectedCallback = () => {
-                let count = 0;
-                let inView = false; // this for sending an event if page unloads or if
-                let inViewQueue = []; // I only need this if I'm going to calculate duration
-                let timeoutHandle;
-                
-                return entries => {
-                    for (const entry of entries) {
-                        //console.log(entry);
-                        inView = entry.isIntersecting;
-                        if (inView) {
-                            console.log('intersecting');
-                            entry.target.startTime = entry.time;
-
-                            inViewQueue.push(entry);
-
-                            const delay = getFsThreshold(entry) || 500;
-                            timeoutHandle = window.setTimeout(() => {
-                                if (inView) {
-                                    count++;
-                                    //console.log(`# of views: ${count}`);
-                                    fireEvent(entry, count);
-                                }
-                            }, delay); // this appears to be bugging out still
-                            
-                        } else {
-                            window.clearTimeout(timeoutHandle);
-                            const found = inViewQueue.find((element) => {
-                                return getFsViewName(element) === getFsViewName(entry);
-                            });
-                            //console.log(`found: ${found}`)
-                            found.target.duration = entry.time - found.target.startTime;
-                            //console.log(`duration ${found.target.duration}`);
-                            inViewQueue = inViewQueue.filter((element) => {
-                                return getFsViewName(element) !== getFsViewName(entry);
-                            })
-
-                            //console.log(`element found, new queue length: ${inViewQueue.length}`);
-                        }
-
-                        //console.log('time: ' + entry.time.toFixed(2));
-                        //console.log('intersection ratio:  ' + entry.intersectionRatio.toFixed(3));
-                    }
-                };
-            }
-
-            const doSetup = () => {                                
-                const targets = document.querySelectorAll('[data-fs-view]')
-                targets.forEach((target) => {
-                    // TODO: inspect DOM tree to deterine if target or any ancester is blocked
-                    // (also need to look at rec/page data)
-                    // if yes, return without setting observer
-
-                    const observer = new IntersectionObserver(makeIntersectedCallback(), {
-                        threshold: [ 0.8 ]
-                    });          
-                    observer.observe(target);                
-                });
-            }
-
-            window.addEventListener('load', doSetup, false);
+            (function(m,n,e,t,l,o,g,y){
+                if (e in m) {if(m.console && m.console.log) { m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');} return;}
+                g=m[e]=function(a,b,s){g.q?g.q.push([a,b,s]):g._api(a,b,s);};g.q=[];
+                o=n.createElement(t);o.async=1;o.src='https://'+_fs_host+'/s/fs.js';
+                y=n.getElementsByTagName(t)[0];y.parentNode.insertBefore(o,y);
+                g.identify=function(i,v,s){g(l,{uid:i},s);if(v)g(l,v,s)};g.setUserVars=function(v,s){g(l,v,s)};g.event=function(i,v,s){g('event',{n:i,p:v},s)};
+                g.shutdown=function(){g("rec",!1)};g.restart=function(){g("rec",!0)};
+                g.consent=function(a){g("consent",!arguments.length||a)};
+                g.identifyAccount=function(i,v){o='account';v=v||{};v.acctId=i;g(o,v)};
+                g.clearUserCookie=function(){};
+            })(window,document,window['_fs_namespace'],'script','user');
+            
         </script>
     </head>
     <body>
-        <div id="blank">Dragons down there V</div>
-        <div id="pink" data-fs-view="Pink Box"></div>
-        <div id="blue" data-fs-view="Blue Box" data-fs-view-threshold="2000"></div>
+        <div id="eyes" class="emoji">👀</div>
+        <div class="emoji">⬇️</div>
+        <div id="blank"></div>
+        <div id="pink" class="box" data-fs-view="Pink Box">Pink Box</div>
+        <div id="blue" class="box" data-fs-view="Blue Box">Blue Box</div>
     </body>
 </html>
