@@ -26,7 +26,7 @@ npm run serve
 ```
 ### Additonal FAQ
 1. What data are being sent to FullStory?
-The value of the `data-fs-view` attribute as well as the number of times the element was viewed during the session.
+The value of the `data-fs-view` attribute as well as the number of times the element was viewed while the user was on the page.
 2. What is the behavior when the targeted element or an ancestor of the targeted element is blocked?
 No impact on behavior: a blocked element (or the child of a blocked element) will be tracked as "Viewed" but he actual content of the blocked element will not be sent to FullStory's servers. Read more about privacy controls here: https://help.fullstory.com/spp/138664.
 3. Does this stay within FullStory's API quotas?
