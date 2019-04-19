@@ -1,0 +1,1 @@
+# Extend FullStory to index when and how often individual page elements have been viewed.
