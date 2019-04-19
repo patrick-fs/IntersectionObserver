@@ -19,6 +19,8 @@ window['_fs_ready'] = function () {
 <!-- data-fs-view-threshold is in milliseconds -->
 <div id="blue" class="box" data-fs-view="Blue Box" data-fs-view-threshold="2000">Blue Box</div>
 ```
+### How does this work?
+The FullStory [Custom Event API](https://help.fullstory.com/develop-js/363565-fs-event-api-sending-custom-event-data-into-fullstory) is integrated with the [IntersectionObserver](https://webkit.org/blog/8582/intersectionobserver-in-webkit/) browser API. See the `extension.js` file in this repository for details.
 ### How to run the demo
 ```Bash
 npm install
