@@ -50,10 +50,6 @@ const makeIntersectedCallback = () => {
 const initExtension = () => {                                
   const targets = document.querySelectorAll('[data-fs-view]');
   targets.forEach((target) => {
-      // TODO: inspect DOM tree to deterine if target or any ancester is blocked
-      // (also need to look at rec/page data)
-      // if yes, return without setting observer
-
       const observer = new IntersectionObserver(makeIntersectedCallback(), {
           threshold: [ 0.8 ]
       });          
