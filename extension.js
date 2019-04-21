@@ -47,12 +47,34 @@ const makeIntersectedCallback = () => {
   };
 }
 
-const initExtension = () => {                                
-  const targets = document.querySelectorAll('[data-fs-view]');
+const attachObserver = (target) => {
+  const observer = new IntersectionObserver(makeIntersectedCallback(), {
+    threshold: [ 0.8 ]
+  });          
+  observer.observe(target);     
+}
+
+const observeFsView = (root) => {
+  if (root.getAttribute('data-fs-view')) {
+    attachObserver(root);
+  }
+
+  const targets = root.querySelectorAll('[data-fs-view]');
   targets.forEach((target) => {
-      const observer = new IntersectionObserver(makeIntersectedCallback(), {
-          threshold: [ 0.8 ]
-      });          
-      observer.observe(target);                
+    attachObserver(target);
   });
+};
+
+const initExtension = () => {                                
+  const body = document.getElementsByTagName('body')[0];
+  observeFsView(body);
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      for (const addedNode of mutation.addedNodes) {
+        observeFsView(addedNode);
+      }
+    }
+  });
+  
+  observer.observe(body, { childList: true, subtree: true });
 }

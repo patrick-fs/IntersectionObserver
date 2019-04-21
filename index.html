@@ -9,7 +9,7 @@
             }
             .emoji {
                 width: 100%;
-                font-size: 10rem;
+                font-size: 120px;
                 text-align: center;
             }
             #blank {
@@ -36,6 +36,11 @@
                 background-color: blue;
                 color: orchid;
             }
+
+            #green {
+                background-color: green;
+                color: orange;
+            }
         </style>
         <script src="extension.js"></script>
         <script>            
@@ -57,7 +62,23 @@
                 g.identifyAccount=function(i,v){o='account';v=v||{};v.acctId=i;g(o,v)};
                 g.clearUserCookie=function(){};
             })(window,document,window['_fs_namespace'],'script','user');
-            
+        </script>
+        <script>
+            window.addEventListener('load', () => {
+                let greenAdded = false;
+                document.getElementById('addGreen').addEventListener('click', () => {
+                    if (!greenAdded) {
+                        greenAdded = true;
+                        const greenBox = document.createElement('div');
+                        const words = document.createTextNode('Green Box');
+                        greenBox.appendChild(words);
+                        greenBox.setAttribute('class', 'box');
+                        greenBox.setAttribute('id', 'green');
+                        greenBox.setAttribute('data-fs-view', 'Green Box');
+                        document.body.appendChild(greenBox);
+                    }
+                });
+            });
         </script>
     </head>
     <body>
@@ -66,5 +87,6 @@
         <div id="blank"></div>
         <div id="pink" class="box" data-fs-view="Pink Box">Pink Box</div>
         <div id="blue" class="box" data-fs-view="Blue Box">Blue Box</div>
+        <button id="addGreen">Add a Green box</button>
     </body>
 </html>
