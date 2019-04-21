@@ -13,10 +13,8 @@ const fireEvent = (entry, count) => {
   // TODO: validate that name exists
   // if not, console.warn about it and return
   FS.event(`Viewed ${getFsViewName(entry)}`, {
-      name: getFsViewName(entry),
       numberOfViews: count,
   });
-  
   
   console.log(`sent event ${getFsViewName(entry)} at ${(new Date()).getTime()} with count ${count}`);
 };
@@ -28,7 +26,6 @@ const makeIntersectedCallback = () => {
   
   return entries => {
       for (const entry of entries) {
-          //console.log(entry);
           inView = entry.isIntersecting;
           if (inView) {
               console.log('intersecting');
