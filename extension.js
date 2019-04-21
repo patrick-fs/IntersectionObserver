@@ -13,10 +13,8 @@ const fireEvent = (entry, count) => {
   // TODO: validate that name exists
   // if not, console.warn about it and return
   FS.event(`Viewed ${getFsViewName(entry)}`, {
-      name: getFsViewName(entry),
       numberOfViews: count,
   });
-  
   
   console.log(`sent event ${getFsViewName(entry)} at ${(new Date()).getTime()} with count ${count}`);
 };
@@ -28,7 +26,6 @@ const makeIntersectedCallback = () => {
   
   return entries => {
       for (const entry of entries) {
-          //console.log(entry);
           inView = entry.isIntersecting;
           if (inView) {
               console.log('intersecting');
@@ -47,12 +44,34 @@ const makeIntersectedCallback = () => {
   };
 }
 
-const initExtension = () => {                                
-  const targets = document.querySelectorAll('[data-fs-view]');
+const attachObserver = (target) => {
+  const observer = new IntersectionObserver(makeIntersectedCallback(), {
+    threshold: [ 0.8 ]
+  });          
+  observer.observe(target);     
+}
+
+const observeFsView = (root) => {
+  if (root.getAttribute('data-fs-view')) {
+    attachObserver(root);
+  }
+
+  const targets = root.querySelectorAll('[data-fs-view]');
   targets.forEach((target) => {
-      const observer = new IntersectionObserver(makeIntersectedCallback(), {
-          threshold: [ 0.8 ]
-      });          
-      observer.observe(target);                
+    attachObserver(target);
   });
+};
+
+const initExtension = () => {                                
+  const body = document.getElementsByTagName('body')[0];
+  observeFsView(body);
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      for (const addedNode of mutation.addedNodes) {
+        observeFsView(addedNode);
+      }
+    }
+  });
+  
+  observer.observe(body, { childList: true, subtree: true });
 }
