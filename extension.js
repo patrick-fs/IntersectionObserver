@@ -13,7 +13,7 @@ const fireEvent = (entry, count) => {
   // TODO: validate that name exists
   // if not, console.warn about it and return
   FS.event(`Viewed ${getFsViewName(entry)}`, {
-      numberOfViews: count,
+    numberOfViews: count,
   });
   
   console.log(`sent event ${getFsViewName(entry)} at ${(new Date()).getTime()} with count ${count}`);
@@ -25,22 +25,21 @@ const makeIntersectedCallback = () => {
   let timeoutHandle;
   
   return entries => {
-      for (const entry of entries) {
-          inView = entry.isIntersecting;
-          if (inView) {
-              console.log('intersecting');
-              const delay = getFsThreshold(entry) || 500;
-              timeoutHandle = window.setTimeout(() => {
-                  if (inView) { // this test might not be needed since the timeout is being cleared
-                      count++;
-                      fireEvent(entry, count);
-                  }
-              }, delay);
-              
-          } else {
-              window.clearTimeout(timeoutHandle);                            
-          }
+    for (const entry of entries) {
+      inView = entry.isIntersecting;
+      if (inView) {
+        console.log('intersecting');
+        const delay = getFsThreshold(entry) || 500;
+        timeoutHandle = window.setTimeout(() => {
+            if (inView) { // this test might not be needed since the timeout is being cleared
+              count++;
+              fireEvent(entry, count);
+            }
+        }, delay);          
+      } else {
+        window.clearTimeout(timeoutHandle);                            
       }
+    }
   };
 }
 
