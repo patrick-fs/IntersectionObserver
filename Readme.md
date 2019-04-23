@@ -4,8 +4,6 @@
 
 ### Search
 ![IntersectionObserver4](https://user-images.githubusercontent.com/45576380/56548466-27237380-654e-11e9-97e9-a345c715c5ca.gif)
-Filter by the number of views
-![IntersectionObserver5](https://user-images.githubusercontent.com/45576380/56549098-ddd42380-654f-11e9-8bbc-9003053a8e1d.gif)
 
 ### How to use
 1. Place `<script src="extension.js"></script>` ahead of the [FullStory snippet](https://help.fullstory.com/using/recording-snippet)
