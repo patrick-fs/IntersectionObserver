@@ -1,5 +1,8 @@
 ## Find out when and how often individual page elements have been viewed using FullStory
+### Replay
 ![IntersectionObserver2](https://user-images.githubusercontent.com/45576380/56548378-f5aaa800-654d-11e9-82ec-1193519ccea0.gif)
+### Search
+![IntersectionObserver4](https://user-images.githubusercontent.com/45576380/56548466-27237380-654e-11e9-97e9-a345c715c5ca.gif)
 ### How to use
 1. Place `<script src="extension.js"></script>` ahead of the [FullStory snippet](https://help.fullstory.com/using/recording-snippet)
 2. Add this callback to the snippet
