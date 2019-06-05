@@ -50,7 +50,7 @@ const attachObserver = (target) => {
     });          
     observer.observe(target);
   } else {
-    console.warn('The IntersectionObserver API is not suppoerted by this browser');
+    console.warn('The IntersectionObserver API is not supported by this browser');
   }
 }
 
