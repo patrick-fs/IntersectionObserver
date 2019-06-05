@@ -44,10 +44,14 @@ const makeIntersectedCallback = () => {
 }
 
 const attachObserver = (target) => {
-  const observer = new IntersectionObserver(makeIntersectedCallback(), {
-    threshold: [ 0.8 ]
-  });          
-  observer.observe(target);     
+  if (IntersectionObserver) {
+    const observer = new IntersectionObserver(makeIntersectedCallback(), {
+      threshold: [ 0.8 ]
+    });          
+    observer.observe(target);
+  } else {
+    console.warn('The IntersectionObserver API is not suppoerted by this browser');
+  }
 }
 
 const observeFsView = (root) => {
